@@ -3,12 +3,18 @@ import streamlit as st
 from categorizer import classificador
 import data_cleaning as dc
 from tipo_transacao import TipoTransacao
+from planilha import inserir_planilha
+import json
 
 
 def main():
     st.title("Validador de CSV/Excel v1")
     opcoes_combobox = ['Escolha', TipoTransacao.CONTA.value, TipoTransacao.CARTAO.value]
     escolha_combobox = st.selectbox("Escolha uma opção", opcoes_combobox)
+    gspread_credential = json.loads(st.secrets['gspreadsheet']['my_project_settings'])
+    gspread_name = st.secrets['gspreadsheet']['SPREADSHEET_NAME']
+
+
 
     uploaded_file = None
 
@@ -17,27 +23,24 @@ def main():
 
     if uploaded_file is not None:
         try:
-            # Tenta carregar o arquivo como DataFrame
             df = pd.DataFrame()
 
             if uploaded_file.type == 'application/vnd.ms-excel':
                 df = dc.data_cleaning(pd.read_excel(uploaded_file, dtype='str'), TipoTransacao.CONTA)
-                print('saiu)')
                 st.write(df.head())
+                inserir_planilha(df,gspread_credential,gspread_name)
+
+
             else:
                 df = dc.data_cleaning(pd.read_csv(uploaded_file, dtype='str',sep=';'),TipoTransacao.CARTAO)
                 st.write(df.head())
+                
+                inserir_planilha(df,gspread_credential,gspread_name)
 
-
-            # Se o carregamento for bem-sucedido, exibe uma mensagem de sucesso
             st.success("Arquivo carregado com sucesso!")
 
-            # Exibe informações básicas sobre o DataFrame
-            #st.write("Principais estatísticas do DataFrame:")
-            #st.write(df.describe())
 
         except Exception as e:
-            # Se ocorrer uma exceção, exibe uma mensagem de erro
             st.error(f"Erro ao carregar o arquivo: {e}")
 
 if __name__ == "__main__":

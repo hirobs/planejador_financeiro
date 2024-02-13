@@ -6,8 +6,8 @@ def data_cleaning(df,origem:str):
         df = apagar_transacao(df,origem)
         nova_ordem_colunas = ['dt', 'categoria', 'descricao','parcela','valor','tipo_transacao']
         df = df[nova_ordem_colunas]
-        
-        print(df.head())
+
+        #print(df.head())
 
         return df
 
