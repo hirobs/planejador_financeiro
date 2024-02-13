@@ -9,6 +9,7 @@ readme = "README.md"
 python = "^3.11"
 pandas = "^2.2.0"
 streamlit = "^1.31.0"
+tabula = "^1.0.5"
 
 
 [tool.poetry.group.docs.dependencies]
