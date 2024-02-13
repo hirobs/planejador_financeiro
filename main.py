@@ -19,13 +19,13 @@ def main():
         try:
             # Tenta carregar o arquivo como DataFrame
             df = pd.DataFrame()
+
             if uploaded_file.type == 'application/vnd.ms-excel':
-                #st.write(type(uploaded_file))
                 df = dc.data_cleaning(pd.read_excel(uploaded_file, dtype='str'), TipoTransacao.CONTA)
+                print('saiu)')
                 st.write(df.head())
-                
             else:
-                df = dc.data_cleaning(pd.read_csv(uploaded_file, dtype='str'),TipoTransacao.CARTAO)
+                df = dc.data_cleaning(pd.read_csv(uploaded_file, dtype='str',sep=';'),TipoTransacao.CARTAO)
                 st.write(df.head())
 
 
