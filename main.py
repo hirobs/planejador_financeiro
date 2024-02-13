@@ -6,7 +6,7 @@ from tipo_transacao import TipoTransacao
 
 
 def main():
-    st.title("Validador de CSV/Excel")
+    st.title("Validador de CSV/Excel v1")
     opcoes_combobox = ['Escolha', TipoTransacao.CONTA.value, TipoTransacao.CARTAO.value]
     escolha_combobox = st.selectbox("Escolha uma opção", opcoes_combobox)
 
