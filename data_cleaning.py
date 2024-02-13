@@ -2,10 +2,7 @@ import pandas as pd
 from tipo_transacao import TipoTransacao
 
 def data_cleaning(df,origem:str):
-#    if origem == TipoTransacao.CARTAO:
         df = apagar_transacao(df,origem)
-        print(df)
-#    return None
 
 def apagar_transacao(df,origem):
     if origem == TipoTransacao.CARTAO:
@@ -33,7 +30,11 @@ def apagar_transacao(df,origem):
         palavras_a_apagar= ['saldo','asd']
         condicao_apagar = df['descricao'].str.contains('|'.join(palavras_a_apagar), case=False)
         df = df[~condicao_apagar]
-        
+
+        df['parcela'] = None
+        df['categoria'] = None
+
+
         return df
     
 if __name__ == "__main__":
