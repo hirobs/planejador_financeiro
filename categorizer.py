@@ -1,9 +1,10 @@
 import pandas as pd
+import warnings
 
 def recategorizador(descricao):
     caminho_recategorizador = 'aux/recategorizacao.xlsx'
     # Carregar o arquivo Excel em um DataFrame do pandas
-    
+    warnings.simplefilter(action='ignore', category=UserWarning)
     df_recategorizador = pd.read_excel(caminho_recategorizador)
     
 
