@@ -2,31 +2,22 @@ import pandas as pd
 from tipo_transacao import TipoTransacao
 
 def data_cleaning(df,origem:str):
-
         df = apagar_transacao(df,origem)
         nova_ordem_colunas = ['dt', 'categoria', 'descricao','parcela','valor','tipo_transacao']
         df = df[nova_ordem_colunas]
-
-        #print(df.head())
 
         return df
 
 def apagar_transacao(df,origem):
     if origem == TipoTransacao.CARTAO:
-        #print(df.columns)
         df.columns = ['dt', 'nome', 'final', 'categoria', 'descricao', 'parcela', 'valor_us','cotacao',  'valor']
-        #df.drop(columns=['Nome no Cartão','Final do Cartão','Valor (em US$)','Cotação (em R$)'], inplace=True)
         df.drop(columns=['nome','final','valor_us','cotacao'], inplace=True)
-        # df.rename(columns={'Data de Compra': 'dt', 'Descrição': 'descricao', 
-        #                    'Valor (em R$)': 'valor', 'Parcela': 'parcela', 'Categoria': 'categoria'}, inplace=True)
-        
+       
         palavras_a_apagar = ["pagamento fatura", "estorno tarifa", "anuidade diferenciada"]
         condicao_apagar = df['descricao'].str.contains('|'.join(palavras_a_apagar), case=False)
         df = df[~condicao_apagar]
 
-        #df['tipo_transacao'] = TipoTransacao.CARTAO.value
         df.loc[:, 'tipo_transacao'] = origem.value
-#           dt                          categoria              descricao parcela   valor tipo_transacao
 
         return df
     
@@ -39,7 +30,7 @@ def apagar_transacao(df,origem):
         df = df.loc[:index_max-1]
         df = df.reset_index(drop=True)
         #Apagar as informações de saldo
-        palavras_a_apagar= ['saldo','asd']
+        palavras_a_apagar= ['saldo']
         condicao_apagar = df['descricao'].str.contains('|'.join(palavras_a_apagar), case=False)
         df = df[~condicao_apagar]
 

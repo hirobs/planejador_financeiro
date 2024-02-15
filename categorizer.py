@@ -1,7 +1,7 @@
 import pandas as pd
 
-def recategorizer(descricao):
-    caminho_recategorizador = '/Users/hirobs/Library/CloudStorage/OneDrive-SharedLibraries-Onedrive/recategorizacao.xlsx'
+def recategorizador(descricao):
+    caminho_recategorizador = 'aux/recategorizacao.xlsx'
     # Carregar o arquivo Excel em um DataFrame do pandas
     
     df_recategorizador = pd.read_excel(caminho_recategorizador)
@@ -20,28 +20,17 @@ def recategorizer(descricao):
 
     return None
     
-def classificador(lista_transacao, titulo_arquivo = None, tipo_arquivo = None):
+def classificador(df):
+    df_copia = df.copy()
+    for indice, transacao in df_copia.iterrows():
+        descricao = transacao['descricao']
 
-    # Classificar cada descrição na lista
-    descricao = ''
-    for transacao in lista_transacao:
-        # Verificar se a descrição precisa de recategorização
-        if tipo_arquivo == 'CARTAO':
-            descricao = transacao[4]
-        else:
-            descricao = transacao[1]
+        nova_categoria = recategorizador(descricao)
 
-        nova_categoria = recategorizer(descricao)
         if nova_categoria:
-            transacao.append(nova_categoria)
-        return transacao
+            df_copia.at[indice, 'categoria'] = nova_categoria
 
-def main():
-    dados = [
-        # Coloque aqui os dados que serão passados para a função classificador()
-    ]
-
-    classificador(dados)
+    return df_copia
 
 if __name__ == "__main__":
-    main()
+    recategorizador()

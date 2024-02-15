@@ -14,8 +14,6 @@ def main():
     gspread_credential = json.loads(st.secrets['gspreadsheet']['my_project_settings'])
     gspread_name = st.secrets['gspreadsheet']['SPREADSHEET_NAME']
 
-
-
     uploaded_file = None
 
     if escolha_combobox != 'Escolha':
@@ -24,15 +22,15 @@ def main():
     if uploaded_file is not None:
         try:
             df = pd.DataFrame()
-
             if uploaded_file.type == 'application/vnd.ms-excel':
                 df = dc.data_cleaning(pd.read_excel(uploaded_file, dtype='str'), TipoTransacao.CONTA)
+                df = classificador(df)
                 st.write(df.head())
+                
                 inserir_planilha(df,gspread_credential,gspread_name)
-
-
             else:
                 df = dc.data_cleaning(pd.read_csv(uploaded_file, dtype='str',sep=';'),TipoTransacao.CARTAO)
+                df = classificador(df)
                 st.write(df.head())
                 
                 inserir_planilha(df,gspread_credential,gspread_name)

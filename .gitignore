@@ -177,3 +177,6 @@ pyrightconfig.json
 
 # Streamlit
 .streamlit/
+
+#mac
+.DS_Store
