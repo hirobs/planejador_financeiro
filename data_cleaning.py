@@ -1,10 +1,13 @@
 import pandas as pd
 from tipo_transacao import TipoTransacao
 
-def data_cleaning(df,origem:str):
+def data_cleaning(df,origem:str, data_max):
         df = apagar_transacao(df,origem)
         nova_ordem_colunas = ['dt', 'categoria', 'descricao','parcela','valor','tipo_transacao']
         df = df[nova_ordem_colunas]
+        # Selecionar linhas onde a coluna 'Data' é maior que a data da variável
+        df = df[pd.to_datetime(df['dt'], format='%d/%m/%Y')> pd.to_datetime(data_max, format='%d/%m/%Y')]
+        print("Quantidade de linhas:", len(df))
 
         return df
 
@@ -40,10 +43,5 @@ def apagar_transacao(df,origem):
 
         return df
     
-if __name__ == "__main__":
-    df_fatura = pd.read_csv('/Users/hirobs/Downloads/Fatura_2024-02-10.csv', dtype='str', sep = ';')
-    #caminho = '/Users/hirobs/Downloads/Extrato Conta Corrente-120220242104.xls'
-    #df = pd.read_excel(caminho)
-    #data_cleaning(df,TipoTransacao.CONTA)
+#if __name__ == "__main__":
 
-    data_cleaning(df_fatura, TipoTransacao.CARTAO)

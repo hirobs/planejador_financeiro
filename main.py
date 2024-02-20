@@ -3,7 +3,7 @@ import streamlit as st
 from categorizer import classificador
 import data_cleaning as dc
 from tipo_transacao import TipoTransacao
-from planilha import inserir_planilha
+import planilha
 import json
 
 
@@ -13,6 +13,7 @@ def main():
     escolha_combobox = st.selectbox("Escolha uma opção", opcoes_combobox)
     gspread_credential = json.loads(st.secrets['gspreadsheet']['my_project_settings'])
     gspread_name = st.secrets['gspreadsheet']['SPREADSHEET_NAME']
+    gc = ''
 
     uploaded_file = None
 
@@ -20,22 +21,26 @@ def main():
         uploaded_file = st.file_uploader("Escolha um arquivo CSV ou Excel", type=["csv", "xlsx","xls"])
 
     if uploaded_file is not None:
+        gc = planilha.conexao_gspread(gspread_credential)
+        linha = 0
         try:
             df = pd.DataFrame()
             if uploaded_file.type == 'application/vnd.ms-excel':
-                df = dc.data_cleaning(pd.read_excel(uploaded_file, dtype='str'), TipoTransacao.CONTA)
+                data_max = planilha.data_maxima(gc,TipoTransacao.CONTA.value,gspread_name)
+                df = dc.data_cleaning(pd.read_excel(uploaded_file, dtype='str'), TipoTransacao.CONTA, data_max)
                 df = classificador(df)
-                st.write(df.head())
+                st.write(df.head())         
                 
-                inserir_planilha(df,gspread_credential,gspread_name)
+                linha = planilha.inserir_planilha(df,gspread_name, gc)
             else:
-                df = dc.data_cleaning(pd.read_csv(uploaded_file, dtype='str',sep=';'),TipoTransacao.CARTAO)
+                data_max = planilha.data_maxima(gc,TipoTransacao.CARTAO.value,gspread_name)
+                df = dc.data_cleaning(pd.read_csv(uploaded_file, dtype='str',sep=';'),TipoTransacao.CARTAO, data_max)
                 df = classificador(df)
                 st.write(df.head())
                 
-                inserir_planilha(df,gspread_credential,gspread_name)
+                linha = planilha.inserir_planilha(df,gspread_name, gc)
 
-            st.success("Arquivo carregado com sucesso!")
+            st.success(f"Arquivo carregado com sucesso! Quantidade de linha(s) inserida(s): {linha}")
 
 
         except Exception as e:
