@@ -45,7 +45,16 @@ def tela_adicionar_dados():
 
 def tela_adicionar_categoria():
     st.session_state.update({"estado_atual": "tela_adicionar_categoria"})
-    st.write('oioi adicionar categoria')
+    # Inputs para descrição e categoria
+    descricao = st.text_input("Descrição:")
+    categoria = st.text_input("Categoria:")
+    
+    # Botão "Adicionar"
+    if st.button("Adicionar"):
+        # Lógica para adicionar a categoria (pode ser adicionada aqui)
+        # Mensagem de confirmação
+        st.success(f"Categoria '{descricao}' adicionada com sucesso na categoria '{categoria}'")
+
 
 def tela_editar_categoria():
     st.session_state.update({"estado_atual": "tela_editar_categoria"})
