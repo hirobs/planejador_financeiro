@@ -1,5 +1,5 @@
 import pandas as pd
-from tipo_transacao import TipoTransacao
+from enums import TipoTransacao
 
 def data_cleaning(df,origem:str, data_max):
         df = apagar_transacao(df,origem)
