@@ -13,7 +13,8 @@ if "estado_atual" not in st.session_state:
 
 def tela_adicionar_dados():
     opcoes_combobox = ['Escolha', TipoTransacao.CONTA.value, TipoTransacao.CARTAO.value]
-    escolha_combobox = st.selectbox("Escolha uma opção", opcoes_combobox, key='combobox_adicionar_dados', index=opcoes_combobox.index(st.session_state.escolha_combobox_adicionar_dados))
+    escolha_combobox = st.selectbox("Escolha uma opção", opcoes_combobox, key='combobox_adicionar_dados', 
+                                    index=opcoes_combobox.index(st.session_state.escolha_combobox_adicionar_dados))
     st.session_state.escolha_combobox_adicionar_dados = escolha_combobox
     st.session_state.update({"estado_atual": "tela_adicionar_dados"})
     if escolha_combobox != 'Escolha':
@@ -45,30 +46,32 @@ def tela_adicionar_dados():
 
 def tela_adicionar_categoria():
     st.session_state.update({"estado_atual": "tela_adicionar_categoria"})
-    # Inputs para descrição e categoria
-    descricao = st.text_input("Descrição:")
-    categoria = st.text_input("Categoria:")
-    
-    # Botão "Adicionar"
-    if st.button("Adicionar"):
-        # Lógica para adicionar a categoria (pode ser adicionada aqui)
-        # Mensagem de confirmação
-        st.success(f"Categoria '{descricao}' adicionada com sucesso na categoria '{categoria}'")
 
+    submit = False
+    descricao = ''
+    categoria = ''
+
+    with st.form("Form"): 
+        descricao = st.text_input("Descrição:")
+        categoria = st.text_input("Categoria:")
+        submit = st.form_submit_button("Submit")
+    if submit:  
+        if descricao != "" and categoria != "":
+            st.success(f"Categoria '{descricao}' adicionada com sucesso na categoria '{categoria}'")
+        else: 
+            st.error("Favor preencher a categoria e descrição")
 
 def tela_editar_categoria():
     st.session_state.update({"estado_atual": "tela_editar_categoria"})
     st.write('oioi editar categoria')
 
-# Lógica para determinar qual tela exibir
 tela_atual = st.session_state.estado_atual
 
-# Adicionando lógica de botões
+# Botão
 botao_adicionar_dado = st.sidebar.button("Adicionar Dado", key="adicionar_dado", use_container_width=True)
 botao_adicionar_categoria = st.sidebar.button("Adicionar Categoria", key="adicionar_categoria", use_container_width=True)
 botao_editar_categoria = st.sidebar.button("Editar Categoria", key="editar_categoria", use_container_width=True)
 
-# Adicionando lógica para determinar a tela a ser exibida
 if botao_adicionar_dado:
     tela_atual = "tela_adicionar_dados"
     st.session_state.estado_atual = tela_atual
@@ -79,10 +82,8 @@ elif botao_editar_categoria:
     tela_atual = "tela_editar_categoria"
     st.session_state.estado_atual = tela_atual
 
-# Conteúdo da tela baseado na escolha
 st.markdown(f"# Tela Atual: {tela_atual}")
 
-# Adicionar lógica para exibir conteúdo específico de cada tela
 if tela_atual == "tela_adicionar_dados":
     tela_adicionar_dados()
 elif tela_atual == "tela_adicionar_categoria":
