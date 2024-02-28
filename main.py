@@ -1,11 +1,14 @@
 import pandas as pd
 import streamlit as st
-from categorizer import classificador
+from categorizer import classificador,adicionar_categoria
 import data_cleaning as dc
 from enums import TipoTransacao, TipoAba
 import planilha
 import json
 
+
+gc = ''
+gspread_name = ''
 # Inicializando session_state
 if "estado_atual" not in st.session_state:
     st.session_state.estado_atual = "tela_adicionar_dados"
@@ -45,6 +48,7 @@ def tela_adicionar_dados():
                 st.error(f"Erro ao carregar o arquivo: {e}")
 
 def tela_adicionar_categoria():
+    global gc, gspread_name 
     st.session_state.update({"estado_atual": "tela_adicionar_categoria"})
 
     submit = False
@@ -57,7 +61,12 @@ def tela_adicionar_categoria():
         submit = st.form_submit_button("Submit")
     if submit:  
         if descricao != "" and categoria != "":
-            st.success(f"Categoria '{descricao}' adicionada com sucesso na categoria '{categoria}'")
+                if gc == "" and gspread_name == "":
+                    gc = planilha.conexao_gspread(json.loads(st.secrets['gspreadsheet']['my_project_settings']))
+                    gspread_name = st.secrets['gspreadsheet']['SPREADSHEET_NAME']
+
+                adicionar_categoria(gc,gspread_name,descricao,categoria)
+                st.success(f"Categoria '{descricao}' adicionada com sucesso na categoria '{categoria}'")
         else: 
             st.error("Favor preencher a categoria e descrição")
 
