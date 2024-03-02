@@ -39,7 +39,7 @@ def tela_adicionar_dados():
                 df = categorizer.classificador(df, gc, gspread_name)
                 st.write(df.head())
 
-                linha = planilha.inserir_planilha(df, gspread_name, gc)
+                linha = planilha.inserir_planilha(df, gspread_name, gc, TipoAba.DADOS)
 
                 st.success(f"Arquivo carregado com sucesso! Quantidade de linha(s) inserida(s): {linha}")
 
