@@ -1,11 +1,10 @@
 import pandas as pd
 import streamlit as st
-from categorizer import classificador,adicionar_categoria
+import categorizer
 import data_cleaning as dc
 from enums import TipoTransacao, TipoAba
 import planilha
 import json
-
 
 gc = ''
 gspread_name = ''
@@ -37,7 +36,7 @@ def tela_adicionar_dados():
                     data_max = planilha.data_maxima(gc, TipoTransacao.CARTAO.value, gspread_name)
                     df = dc.data_cleaning(pd.read_csv(uploaded_file, dtype='str', sep=';'), TipoTransacao.CARTAO, data_max)
 
-                df = classificador(df, gc, gspread_name)
+                df = categorizer.classificador(df, gc, gspread_name)
                 st.write(df.head())
 
                 linha = planilha.inserir_planilha(df, gspread_name, gc)
@@ -65,14 +64,28 @@ def tela_adicionar_categoria():
                     gc = planilha.conexao_gspread(json.loads(st.secrets['gspreadsheet']['my_project_settings']))
                     gspread_name = st.secrets['gspreadsheet']['SPREADSHEET_NAME']
 
-                adicionar_categoria(gc,gspread_name,descricao,categoria)
+                categorizer.adicionar_categoria(gc,gspread_name,descricao,categoria)
                 st.success(f"Categoria '{descricao}' adicionada com sucesso na categoria '{categoria}'")
         else: 
             st.error("Favor preencher a categoria e descrição")
 
 def tela_editar_categoria():
+    global gc, gspread_name 
+    if gc == "" and gspread_name == "":
+        gc = planilha.conexao_gspread(json.loads(st.secrets['gspreadsheet']['my_project_settings']))
+        gspread_name = st.secrets['gspreadsheet']['SPREADSHEET_NAME']
+
     st.session_state.update({"estado_atual": "tela_editar_categoria"})
-    st.write('oioi editar categoria')
+    df = planilha.obter_planilha(gc,gspread_name,TipoAba.CATEGORIA)
+    edited_df = st.data_editor(df)
+    botao_adicionar_dado = st.button("Editar", key="editar")
+    if botao_adicionar_dado:
+        teste(df,edited_df)
+
+def teste (df,edited_df):
+    print('entrou')
+    diferencas = df.compare(edited_df)
+    print (diferencas)
 
 tela_atual = st.session_state.estado_atual
 

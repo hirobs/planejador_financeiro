@@ -180,3 +180,5 @@ pyrightconfig.json
 
 #mac
 .DS_Store
+
+.aux
